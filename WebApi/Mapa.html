@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <title>Simple Map</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  </head>
+
+  <style>
+        #map {
+        height: 100%;
+        }
+
+        html,
+        body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        }
+  </style>
+
+  <body>
+    <div id="map"></div>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTFhlI-Gs1-AgbeJ13oROd-sCF9zMFTbU&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+
+
+    <script>
+        let map;
+
+        var obj;
+
+        var directionsService;
+        var directionsRenderer;
+
+        function initMap() {
+            const hn = { lat: 14.5, lng:  -87.241 };
+          directionsService = new google.maps.DirectionsService();
+          directionsRenderer = new google.maps.DirectionsRenderer();
+
+    
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: hn,
+                zoom: 8,
+            });
+
+        }
+
+
+        function clearMarkers() {
+          directionsRenderer.setMap(null);
+        }
+
+
+
+        function obtenerJson(text){
+
+          obj = JSON.parse(text);
+          console.log(obj);
+        }
+
+
+
+
+        function MarcarRuta(origen, destino) {
+            clearMarkers()
+
+
+            const waypts = [];
+           // var text = '[{"location": "Santa Barbara, HN"},{"location": "Santa Rosa HN"}]';
+            for (x of obj) {
+              waypts.push({
+                  location: x.location,
+                  //stopover: true,
+              });
+
+              console.log(x.location);
+            }
+               
+            directionsRenderer.setMap(map);
+
+            var start = origen+", HN";
+            var end = destino+", HN";
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING',
+                waypoints: waypts
+            };
+            directionsService.route(request, function(result, status) {
+                if (status == 'OK') {
+                directionsRenderer.setDirections(result);
+                }
+            });
+        }
+    </script>
+
+  </body>
+</html>
